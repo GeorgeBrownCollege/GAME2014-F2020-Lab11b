@@ -32,7 +32,6 @@ public class PlayerBehaviour : MonoBehaviour
     public bool isJumping;
     public bool isCrouching;
     public Transform spawnPoint;
-    public Transform lookAheadPoint;
     public Transform lookInFrontPoint;
     public LayerMask collisionGroundLayer;
     public LayerMask collisionWallLayer;
@@ -63,6 +62,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     [Header("Acorn Firing")] 
     public Transform acornSpawn;
+
+    [Header("Parenting")] 
+    public Transform parent;
 
     private Rigidbody2D m_rigidBody2D;
     private SpriteRenderer m_spriteRenderer;
@@ -287,6 +289,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Moving Platform"))
         {
             other.gameObject.GetComponent<MovingPlatformController>().isActive = false;
+            transform.SetParent(parent);
         }
     }
 
@@ -316,6 +319,9 @@ public class PlayerBehaviour : MonoBehaviour
             health = 100;
             healthBar.SetValue(health);
             transform.position = spawnPoint.position;
+
+            FindObjectOfType<GameController>().ResetAllPlatforms();
+
         }
         else
         {

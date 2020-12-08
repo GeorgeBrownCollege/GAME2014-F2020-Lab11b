@@ -14,7 +14,8 @@ public enum ImpulseSounds
     HIT2,
     HIT3,
     DIE,
-    THROW
+    THROW,
+    GEM
 }
 
 public class PlayerBehaviour : MonoBehaviour
@@ -259,6 +260,12 @@ public class PlayerBehaviour : MonoBehaviour
         {
             TakeDamage(1);
         }
+
+        if (other.gameObject.CompareTag("Gem"))
+        {
+            other.gameObject.SetActive(false);
+            HealDamage(10);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -267,7 +274,22 @@ public class PlayerBehaviour : MonoBehaviour
         {
             TakeDamage(10);
         }
+
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            other.gameObject.GetComponent<MovingPlatformController>().isActive = true;
+            transform.SetParent(other.gameObject.transform);
+        }
     }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Moving Platform"))
+        {
+            other.gameObject.GetComponent<MovingPlatformController>().isActive = false;
+        }
+    }
+
 
     private void OnCollisionStay2D(Collision2D other)
     {
@@ -315,6 +337,20 @@ public class PlayerBehaviour : MonoBehaviour
         {
             LoseLife();
         }
+    }
+
+    public void HealDamage(int damage)
+    {
+        health += damage;
+
+        sounds[(int)ImpulseSounds.GEM].Play();
+
+        if (health > 100)
+        {
+            health = 100;
+        }
+
+        healthBar.SetValue(health);
     }
 
     private void CreateDustTrail()
